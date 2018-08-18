@@ -16,8 +16,9 @@ router.post("/doregister", async (ctx) => {
         // let username = ctx.query.username;   //用户名
         // let phone = ctx.query.phone; //手机号
         // let password = ctx.query.password;
-
+        // console.log(username);
         let theresult = await DB.find("users", {"username": username});
+        console.log(theresult);
         if (theresult[0]) {
             ctx.body = {
                 code: 0,
@@ -65,7 +66,7 @@ router.post("/dologin", async (ctx) => {
             ctx.body = {
                 code: 1,
                 message: "登录成功",
-                data: []
+                data: result[0]
             }
         } else {
             throw "登录失败";
@@ -75,6 +76,24 @@ router.post("/dologin", async (ctx) => {
             code: 0,
             message: "登录失败",
             data: []
+        }
+    }
+});
+
+router.get("/userinfo", async (ctx) => {
+    try {
+        let id = ctx.query.id;
+        var userresult = await DB.find("users", {"_id": DB.getObjectId(id)});
+        ctx.body = {
+            code: 1,
+            message: "获取用户信息成功",
+            data: userresult[0],
+        }
+    } catch (e) {
+        ctx.body = {
+            code: 0,
+            message: "获取用户信息失败",
+            data: id,
         }
     }
 });
