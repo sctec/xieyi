@@ -1,0 +1,60 @@
+注册：(post)
+39.106.122.7:3001/api/v1/doregister
+传值：username（用户名）phone（手机）password（密码）
+返回值：用户id
+
+登录：（post）
+39.106.122.7:3001/api/v1/dologin
+传值：username(用户名) password（密码）
+
+生成协议：
+39.106.122.7:3001/api/v1/doProtocol  Post 请求
+传值：title（标题），content（内容），signatoryNum（签署人数）,username（发起人的用户名）
+
+获取协议（分享协议）:
+http:// 39.106.122.7:3001/api/v1/getProtocol?id= （get请求）
+例：http:// 39.106.122.7:3001/api/v1/getProtocol?id=5b752c6965fa1d3ae0fd2bb8
+State 为0 ->签署人数未满。State为1->签署人数已满
+
+签署协议：
+39.106.122.7:3001/api/v1/signProtocol  Post 请求
+传值：username（用户名），id（协议id）。
+
+生成漂流瓶：
+39.106.122.7:3001/api/v1/doFloater  (post请求)
+传值：title (漂流瓶标题) content(漂流瓶内容) region (漂流地方)username (发起者的用户名)
+
+获取漂流瓶列表
+http:// 39.106.122.7:3001/api/v1/floaterList (get)
+
+查看漂流瓶:
+39.106.122.7:3001/api/v1/getFloater   (get)
+传值：协议的id
+
+签署漂流瓶：
+39.106.122.7:3001/api/v1/signProtocol  (post请求)
+传值:漂流瓶的id,签署人的用户名。
+
+修改个人信息：
+39.106.122.7:3001/api/v1/modifyinfo （post请求）
+传值： 
+
+我参与的协议：
+39.106.122.7:3001/api/v1/myprotocol（get请求）
+传值：用户的id
+
+获取评论列表：(get)
+39.106.122.7:3001/api/v1/protocol-commentsList?id=协议的id
+
+发表评论：(post)
+39.106.122.7:3001/api/v1/questions-comments
+传值：protocol_id，user_id，content
+
+点赞（post）
+39.106.122.7:3001/api/v1/protocol-parise
+传值：protocol_id，user_id
+
+8/18
+根据id获取用户信息（get）
+http://39.106.122.7:3001/api/v1/userinfo
+传值：id
