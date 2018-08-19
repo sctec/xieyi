@@ -31,7 +31,9 @@ router.post("/doregister", async (ctx) => {
                 "phone": phone,
                 "password": tools.md5(password),
                 "protocols": [],
-                "state": Number(0),
+                "nickname":"",
+                "sex":"",
+                "email":"",
             });
             console.log(result);
             if (result) {
@@ -79,7 +81,7 @@ router.post("/dologin", async (ctx) => {
         }
     }
 });
-
+//根据用户id 获取用户信息
 router.get("/userinfo", async (ctx) => {
     try {
         let id = ctx.query.id;
@@ -101,7 +103,9 @@ router.get("/userinfo", async (ctx) => {
 //获取已分享协议列表(抖协议)
 router.get("/protocolList", async (ctx) => {
     try {
-        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)});
+        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)},{},{
+            sortJson:{"praiseNum":1}
+        });
         ctx.body = {
             code: 1,
             message: "获取已分享协议列表",
@@ -122,7 +126,7 @@ router.post("/doProtocol", async (ctx) => {
         let content = ctx.request.body.content;       //协议内容
         let signatoryNum = ctx.request.body.signatoryNum; //签署人数
         let username = ctx.request.body.username;     //发起者的用户名
-        let share = ctx.request.body.share;     //
+        let share = ctx.request.body.share;     //是否分享
 
         // let title = ctx.query.title;         //协议标题
         // let content = ctx.query.content;       //协议内容
@@ -284,7 +288,7 @@ router.post("/protocol-comments", async (ctx) => {
         });
         console.log(addResult);
         let findResult = await DB.find("protocol", {"_id": DB.getObjectId(protocol_id)});
-        findResult[0].comments.push(user_id);
+        findResult[0].comments.push(addResult.insertedId);
         console.log(findResult[0].comments);
         await DB.update("protocol", {"_id": DB.getObjectId(protocol_id)}, {
             "comments": findResult[0].comments,
@@ -316,7 +320,7 @@ router.post("/protocol-parise", async (ctx) => {
             console.log("2" + findResult[0].protocol_praise.indexOf(user_id));
             ctx.body = {
                 code: 0,
-                message: "您已点赞成功",
+                message: "您已点赞过",
                 data: {"ok": 1}
             }
         } else {
@@ -392,7 +396,9 @@ router.post("/makefloater", async (ctx) => {
 //获取漂流瓶列表
 router.get("/floaterList", async (ctx) => {
     try {
-        var getfloaterresult = await DB.find("floater", {"state": 0});
+        var getfloaterresult = await DB.find("floater", {"state": 0},{},{
+            sortJson:{"created_at":1}
+        });
         ctx.body = {
             code: 1,
             message: "获取漂流瓶列表成功",
@@ -531,6 +537,59 @@ router.get("/myprotocol", async (ctx) => {
             message: "获取协议列表失败",
             data: []
         }
+    }
+});
+
+//查看具体协议
+router.get("/viewProtocol", async (ctx) => {
+    try {
+        let id = ctx.query.id;
+        console.log(id);
+        let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+        let protocol_comments = await DB.find("protocol_comments",{"protocol_id":id});
+        result[0].protocol_comments = protocol_comments;
+        ctx.body = {
+            code: 1,
+            message: "查看具体协议成功",
+            data: result[0],
+        };
+    } catch (e) {
+        ctx.body = {
+            code: -1,
+            message: "捞取漂流瓶失败",
+            data: []
+        }
+    }
+});
+
+//意见反馈
+router.post("/feedback",async (ctx)=>{
+    try{
+        let content = ctx.request.body.content;       //漂流瓶内容
+        let phone = ctx.request.body.phone || "";             //手机号
+        let qq = ctx.request.body.qq ||"";
+        let weixin = ctx.request.body.weixin ||"";
+        let addResult = await DB.insert("floater", {
+            "content": content,
+            "phone": phone,
+            "qq": qq,
+            "weixin":weixin,
+            "created_at": new Date(),
+        });
+        let protocolId = addResult.insertedId;
+
+        ctx.body = {
+            code: 1,
+            message: "意见反馈成功",
+            data: protocolId,
+        };
+
+    } catch (e) {
+        ctx.body = {
+            code: -1,
+            message: "意见反馈失败，请稍后重试",
+            data: [],
+        };
     }
 });
 
