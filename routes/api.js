@@ -17,12 +17,19 @@ router.post("/doregister", async (ctx) => {
         // let phone = ctx.query.phone; //手机号
         // let password = ctx.query.password;
         // console.log(username);
-        let theresult = await DB.find("users", {"username": username});
-        console.log(theresult);
-        if (theresult[0]) {
+        let theresultone = await DB.find("users", {"username": username});
+        let theresulttwo = await DB.find("users", {"phone": phone});
+        console.log(theresultone);
+        if (theresultone[0]) {
             ctx.body = {
                 code: 0,
                 message: "用户名被占用",
+                data: {}
+            }
+        } else if(theresulttwo[0]){
+            ctx.body = {
+                code: 0,
+                message: "手机号被占用",
                 data: {}
             }
         } else {
