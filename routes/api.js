@@ -38,9 +38,9 @@ router.post("/doregister", async (ctx) => {
                 "phone": phone,
                 "password": tools.md5(password),
                 "protocols": [],
-                "nickname":"",
-                "sex":"",
-                "email":"",
+                "nickname":null,
+                "sex":null,
+                "email":null,
             });
             console.log(result);
             if (result) {
