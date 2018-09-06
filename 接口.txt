@@ -21,7 +21,7 @@ State 为0 ->签署人数未满。State为1->签署人数已满
 传值：username（用户名），id（协议id）。
 
 生成漂流瓶：
-39.106.122.7:3001/api/v1/doFloater  (post请求)
+39.106.122.7:3001/api/v1/makefloater  (post请求)
 传值：title (漂流瓶标题) content(漂流瓶内容) region (漂流地方)username (发起者的用户名)
 
 获取漂流瓶列表
