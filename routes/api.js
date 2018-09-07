@@ -539,6 +539,7 @@ router.post("/modifyinfo", async (ctx) => {
         let region = ctx.request.body.region;
         let phone = ctx.request.body.phone;
         let email = ctx.request.body.email;
+        let password = ctx.request.body.password;
 
         // let id=ctx.query.id;
         // let nickname = ctx.query.nickname;
@@ -557,6 +558,7 @@ router.post("/modifyinfo", async (ctx) => {
             "region": region,
             "phone": phone,
             "email": email,
+            "password":tools.md5(password),
         });
         ctx.body = {
             code: 1,
