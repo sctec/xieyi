@@ -1,81 +1,81 @@
 注册：(post)
-39.106.122.7:3001/api/v1/doregister
+xyapi.lzhu.top/api/v1/doregister
 传值：username（用户名）phone（手机）password（密码）
 返回值：用户id
 
 登录：（post）
-39.106.122.7:3001/api/v1/dologin
+xyapi.lzhu.top/api/v1/dologin
 传值：username(用户名) password（密码）
 
 生成协议：
-39.106.122.7:3001/api/v1/doProtocol  Post 请求
+xyapi.lzhu.top/api/v1/doProtocol  Post 请求
 传值：title（标题），content（内容），signatoryNum（签署人数）,username（发起人的用户名）,share(是否分享.0不分享，1分享)
 
 获取协议（分享协议）:
-http:// 39.106.122.7:3001/api/v1/getProtocol?id= （get请求）
-例：http:// 39.106.122.7:3001/api/v1/getProtocol?id=5b752c6965fa1d3ae0fd2bb8
+http:// xyapi.lzhu.top/api/v1/getProtocol?id= （get请求）
+例：http:// xyapi.lzhu.top/api/v1/getProtocol?id=5b752c6965fa1d3ae0fd2bb8
 State 为0 ->签署人数未满。State为1->签署人数已满
 
 签署协议：
-39.106.122.7:3001/api/v1/signProtocol  Post 请求
+xyapi.lzhu.top/api/v1/signProtocol  Post 请求
 传值：username（用户名），id（协议id）。
 
 生成漂流瓶：
-39.106.122.7:3001/api/v1/makefloater  (post请求)
+xyapi.lzhu.top/api/v1/makefloater  (post请求)
 传值：title (漂流瓶标题) content(漂流瓶内容) region (漂流地方)username (发起者的用户名)
 
 获取漂流瓶列表
-http:// 39.106.122.7:3001/api/v1/floaterList (get)
+http:// xyapi.lzhu.top/api/v1/floaterList (get)
 
 查看漂流瓶:
-39.106.122.7:3001/api/v1/getFloater   (get)
+xyapi.lzhu.top/api/v1/getFloater   (get)
 传值：协议的id
 
 签署漂流瓶：
-39.106.122.7:3001/api/v1/signProtocol  (post请求)
+xyapi.lzhu.top/api/v1/signProtocol  (post请求)
 传值:漂流瓶的id,签署人的用户名。
 
 修改个人信息：
-39.106.122.7:3001/api/v1/modifyinfo （post请求）
+xyapi.lzhu.top/api/v1/modifyinfo （post请求）
 传值： 
 
 我参与的协议：
-39.106.122.7:3001/api/v1/myprotocol（get请求）
+xyapi.lzhu.top/api/v1/myprotocol（get请求）
 传值：用户的id
 
 获取评论列表：(get)
-39.106.122.7:3001/api/v1/protocol-commentsList?id=协议的id
+xyapi.lzhu.top/api/v1/protocol-commentsList?id=协议的id
 
 发表评论：(post)
-39.106.122.7:3001/api/v1/questions-comments
+xyapi.lzhu.top/api/v1/questions-comments
 传值：protocol_id，user_id，content
 
 点赞（post）
-39.106.122.7:3001/api/v1/protocol-parise
+xyapi.lzhu.top/api/v1/protocol-parise
 传值：protocol_id，user_id
 
 8/18
 根据id获取用户信息（get）
-http://39.106.122.7:3001/api/v1/userinfo
+xyapi.lzhu.top/api/v1/userinfo
 传值：id
 
 8/19
 //获取已分享协议列表(抖协议)(get)
-http://39.106.122.7:3001/api/v1/protocolList
+xyapi.lzhu.top/api/v1/protocolList
 
 查看具体协议(get)
-http://39.106.122.7:3001/api/v1/viewProtocol
+xyapi.lzhu.top/api/v1/viewProtocol
 传值协议的id
 
 搜索离自己近的协议暂时做不了...
 
 //意见反馈(post)
-http://39.106.122.7:3001/api/v1/feedback
+xyapi.lzhu.top/api/v1/feedback
 传值：content(必填)，qq,phone,weixin(选填)
 
 
 //漂流瓶页面数据(get)
-http://xyapi.lzhu.top/api/v1/myfloater
+xyapi.lzhu.top/api/v1/myfloater
 传值：id(用户的id)
 
 
