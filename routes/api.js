@@ -26,7 +26,7 @@ router.post("/doregister", async (ctx) => {
                 message: "用户名被占用",
                 data: {}
             }
-        } else if(theresulttwo[0]){
+        } else if (theresulttwo[0]) {
             ctx.body = {
                 code: 0,
                 message: "手机号被占用",
@@ -38,9 +38,11 @@ router.post("/doregister", async (ctx) => {
                 "phone": phone,
                 "password": tools.md5(password),
                 "protocols": [],
-                "nickname":null,
-                "sex":null,
-                "email":null,
+                "protocol":[],
+                "floater":[],
+                "nickname": null,
+                "sex": null,
+                "email": null,
             });
             console.log(result);
             if (result) {
@@ -56,7 +58,7 @@ router.post("/doregister", async (ctx) => {
     } catch (e) {
         ctx.body = {
             code: -1,
-            message: "注册失败",
+            message: e,
             data: []
         }
     }
@@ -110,8 +112,8 @@ router.get("/userinfo", async (ctx) => {
 //获取已分享协议列表(抖协议)
 router.get("/protocolList", async (ctx) => {
     try {
-        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)},{},{
-            sortJson:{"praiseNum":1}
+        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)}, {}, {
+            sortJson: {"praiseNum": 1}
         });
         ctx.body = {
             code: 1,
@@ -135,6 +137,8 @@ router.post("/doProtocol", async (ctx) => {
         let username = ctx.request.body.username;     //发起者的用户名
         let share = ctx.request.body.share;     //是否分享
 
+        console.log(share);
+
         // let title = ctx.query.title;         //协议标题
         // let content = ctx.query.content;       //协议内容
         // let signatoryNum = ctx.query.signatoryNum; //签署人数
@@ -151,13 +155,24 @@ router.post("/doProtocol", async (ctx) => {
             "comments": [],
             "protocol_praise": []
         });
-        let protocolId = addResult.insertedId;
+        // console.log(addResult);
+        let protocolId = addResult.insertedId;  //insertedId 该协议的id
+        let protocolItem = {
+            id: protocolId,
+            type: Number(0)
+        };
+        // console.log(protocolItem);
         let userResult = await DB.find("users", {"username": username});
-        userResult[0].protocols.push(protocolId);
+        console.log(userResult);
+        userResult[0].protocols.push(protocolItem);     //存入协议+漂流瓶
+        userResult[0].protocol.push(protocolId);        //存入协议
+        console.log(userResult[0].protocols);
+        // console.log(2);
         let upResult = await DB.update("users", {"username": username}, {
-            "protocols": userResult[0].protocols
+            "protocols": userResult[0].protocols,
+            "protocol": userResult[0].protocol
         });
-
+        // console.log(1);
         if (protocolId) {     //文档的objectID
             ctx.body = {
                 code: 1,
@@ -232,15 +247,23 @@ router.post("/signProtocol", async (ctx) => {
             });
             let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
             if (result[0].signatory.length == result[0].signatoryNum) {
-                await DB.update("protocol", {"_id": DB.getObjectId(id)},{"state": Number(1)});
+                await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"state": Number(1)});
             }
             let userResult = await DB.find("users", {"username": username});
             console.log(userResult);
-            userResult[0].protocols.push(id);
-            console.log(userResult[0].protocols);
+
+            let protocolItem = {        //要存入协议+漂流瓶的协议对象
+                id: id,
+                type: Number(0)
+            };
+            userResult[0].protocols.push(protocolItem);
+            userResult[0].protocol.push(id);
+            //签署协议后更新签署人的用户表
             let updateResult = await DB.update("users", {"username": username}, {
-                "protocols": userResult[0].protocols
+                "protocols": userResult[0].protocols,
+                "protocol": userResult[0].protocol
             });
+
             ctx.body = {
                 code: 1,
                 message: "创建成功",
@@ -364,7 +387,6 @@ router.post("/makefloater", async (ctx) => {
         // let content = ctx.query.content;       //协议内容
         // let region = ctx.query.region;          //漂流地方
         // let username = ctx.query.username;     //发起者的用户名
-
         let addResult = await DB.insert("floater", {
             "title": title,
             "content": content,
@@ -375,19 +397,26 @@ router.post("/makefloater", async (ctx) => {
             "state": Number(0),
         });
 
-        let protocolId = addResult.insertedId;
-
+        let floaterId = addResult.insertedId;
+        let floaterItem = {
+            id: floaterId,
+            type: Number(1)
+        };
         let userResult = await DB.find("users", {"username": username});
-        userResult[0].protocols.push(protocolId);
+        console.log(userResult);
+        userResult[0].protocols.push(floaterItem);  //在所有签过的协议、漂流瓶数组添加这条记录
+        userResult[0].floater.push(floaterId);      //在漂流瓶数组中添加这条记录。
         let upResult = await DB.update("users", {"username": username}, {
-            "protocols": userResult[0].protocols
+            "protocols": userResult[0].protocols,
+            "floater": userResult[0].floater
         });
 
-        if (protocolId) {     //文档的objectID
+
+        if (floaterId) {     //文档的objectID
             ctx.body = {
                 code: 1,
                 message: "漂流瓶创建成功",
-                data: {"id": protocolId}
+                data: {"id": floaterId}
             }
         } else {
             throw "创建失败"
@@ -400,53 +429,66 @@ router.post("/makefloater", async (ctx) => {
         }
     }
 });
-//获取漂流瓶列表
-router.get("/floaterList", async (ctx) => {
+
+//漂流瓶页面数据
+router.get("/myfloater", async (ctx) => {
     try {
-        var getfloaterresult = await DB.find("floater", {"state": 0},{},{
-            sortJson:{"created_at":1}
-        });
+        let id = ctx.query.id;
+        // let username = ctx.query.username;
+        console.log(username);
+        //存放随机生成的一个漂流瓶和自己已签署过的漂流瓶
+        var result = [];
+        
+        //获取用户已签署的漂流瓶，不包含自己发布但无人签署的部分
+
+        console.log(id);
+        let myfloaterResult = await DB.find("users", {"_id": DB.getObjectId(id)});
+        let floaterNum = myfloaterResult[0].floater.length;
+        var myfloaterArray = [];
+        for (let i = 0; i < floaterNum; i++) {
+            let myfloaterId = myfloaterResult[0].floater[i];
+            let myfloater = await DB.find("floater", {"_id": DB.getObjectId(myfloaterId), "state": 1});
+            myfloaterArray.push(myfloater[0]);
+        }
+
+        //生成随机数函数，用来获取随机的一个漂流瓶
+        function getFloaterRandom(start, end) {
+            var length = end - start + 1;
+            var num = parseInt(Math.random() * (length) + start);
+            return num;
+        }
+
+        //获取未签署漂流瓶的个数
+        var getfloaterresult = await DB.find("floater", {"state": 0});
+        let floaterRandomNum = getfloaterresult.length;
+        let theNum = getFloaterRandom(0, floaterRandomNum);
+        var floaterRandom = [];
+        floaterRandom.push(getfloaterresult[theNum]);
+
+        result = floaterRandom.concat(myfloaterArray);
+        
         ctx.body = {
             code: 1,
-            message: "获取漂流瓶列表成功",
-            data: getfloaterresult,
+            message: "获取信息成功",
+            data: result
         }
     } catch (e) {
         ctx.body = {
             code: 0,
-            message: "获取漂流瓶列表失败",
-            data: []
+            message: "获取信息失败",
+            data: result
         }
     }
 });
-//查看漂流瓶(查看不一定签署)
-router.get("/getFloater", async (ctx) => {
-    try {
-        let id = ctx.query.id;
-        console.log(id);
-        // let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
-        let updateresult = await DB.update("floater", {"_id": DB.getObjectId(id)}, {"obtain_at": new Date()});
-        ctx.body = {
-            code: 1,
-            message: "捞取漂流瓶成功",
-            data: updateresult
-        };
-    } catch (e) {
-        ctx.body = {
-            code: -1,
-            message: "捞取漂流瓶失败",
-            data: []
-        }
-    }
-});
-//签署漂流瓶
-router.get("/signFloater", async (ctx) => {
-    try {
-        // let username = ctx.request.body.username;         //签署人的用户名
-        // let id = ctx.request.body.id;                      //漂流瓶的objectid
 
-        let username = ctx.query.username;         //签署人的用户名
-        let id = ctx.query.id;                      //协议的objectid
+//签署漂流瓶
+router.post("/signFloater", async (ctx) => {
+    try {
+        let username = ctx.request.body.username;         //签署人的用户名
+        let id = ctx.request.body.id;                      //漂流瓶的objectid
+
+        // let username = ctx.query.username;         //签署人的用户名
+        // let id = ctx.query.id;                      //协议的objectid
         console.log(username);
         let floaterResult = await DB.find("floater", {"_id": DB.getObjectId(id)});
         floaterResult[0].signatory.push(username);
@@ -458,9 +500,16 @@ router.get("/signFloater", async (ctx) => {
             "signatory": floaterResult[0].signatory
         });
         let userResult = await DB.find("users", {"username": username});
-        userResult[0].protocols.push(id);
+
+        let floaterId = {
+            id: id,
+            type: Number(1)
+        };
+        userResult[0].floater.push(id);
+        userResult[0].protocols.push(floaterId);
         let upResult = await DB.update("users", {"username": username}, {
-            "protocols": userResult[0].protocols
+            "protocols": userResult[0].protocols,
+            "floater": userResult[0].floater
         });
 
         let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
@@ -526,12 +575,17 @@ router.post("/modifyinfo", async (ctx) => {
 router.get("/myprotocol", async (ctx) => {
     try {
         let id = ctx.query.id;
+        console.log(id);
         var myresult = await DB.find("users", {"_id": DB.getObjectId(id)});
         var myprotocolresult = myresult[0].protocols;
         console.log(myprotocolresult);
         var getmyprotocolresult = [];
         for (i = 0; i < myprotocolresult.length; i++) {
-            getmyprotocolresult.push(await DB.find("protocol", {"_id": DB.getObjectId(myprotocolresult[i])}));
+            if (myprotocolresult[i].type==0){
+                getmyprotocolresult.push(await DB.find("protocol", {"_id": DB.getObjectId(myprotocolresult[i].id)}));
+            } else if (myprotocolresult[i].type==1) {
+                getmyprotocolresult.push(await DB.find("floater", {"_id": DB.getObjectId(myprotocolresult[i].id)}));
+            }
         }
         ctx.body = {
             code: 1,
@@ -553,7 +607,7 @@ router.get("/viewProtocol", async (ctx) => {
         let id = ctx.query.id;
         console.log(id);
         let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
-        let protocol_comments = await DB.find("protocol_comments",{"protocol_id":id});
+        let protocol_comments = await DB.find("protocol_comments", {"protocol_id": id});
         result[0].protocol_comments = protocol_comments;
         ctx.body = {
             code: 1,
@@ -570,17 +624,17 @@ router.get("/viewProtocol", async (ctx) => {
 });
 
 //意见反馈
-router.post("/feedback",async (ctx)=>{
-    try{
+router.post("/feedback", async (ctx) => {
+    try {
         let content = ctx.request.body.content;       //漂流瓶内容
         let phone = ctx.request.body.phone || "";             //手机号
-        let qq = ctx.request.body.qq ||"";
-        let weixin = ctx.request.body.weixin ||"";
+        let qq = ctx.request.body.qq || "";
+        let weixin = ctx.request.body.weixin || "";
         let addResult = await DB.insert("floater", {
             "content": content,
             "phone": phone,
             "qq": qq,
-            "weixin":weixin,
+            "weixin": weixin,
             "created_at": new Date(),
         });
         let protocolId = addResult.insertedId;

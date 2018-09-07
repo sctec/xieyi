@@ -12,11 +12,11 @@ const UserSchema = new Schema({     //用户的唯一标识为用户名和object
         type: String,       //用户头像
         default: 'http://www.baidu.jpg'
     },
-    sex:{
+    sex: {
         type: String,   //用户性别
     },
     password: {         //密码
-        type:String,
+        type: String,
         required: true
     },
     email: {
@@ -31,12 +31,14 @@ const UserSchema = new Schema({     //用户的唯一标识为用户名和object
         type: Number,
         default: 0 //0-禁用，1-正常。
     },
-    charactor:{
+    charactor: {
         type: Number,
         default: 0 //0-普通用户，1-会员，2-管理员
     },
-    friends:Array, //好友。存储用户的ObjectId
-    protocols:Array //参与的协议
+    friends: Array, //好友。存储用户的ObjectId
+    protocols: Array, //参与的协议,数组元素为对象。{ObjectId;type:0表示协议，1表示漂流瓶}
+    floater:Array,
+    protocol:Array
 });
 
 const User = mongoose.model('User', UserSchema);
