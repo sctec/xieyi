@@ -32,7 +32,7 @@ xyapi.lzhu.top/api/v1/getFloater   (get)
 传值：协议的id
 
 签署漂流瓶：
-xyapi.lzhu.top/api/v1/signProtocol  (post请求)
+xyapi.lzhu.top/api/v1/signFloater (post请求)
 传值:漂流瓶的id,签署人的用户名。
 
 修改个人信息：

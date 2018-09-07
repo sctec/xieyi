@@ -435,14 +435,15 @@ router.get("/myfloater", async (ctx) => {
     try {
         let id = ctx.query.id;
         // let username = ctx.query.username;
-        console.log(username);
+        // console.log(id);
         //存放随机生成的一个漂流瓶和自己已签署过的漂流瓶
         var result = [];
         
         //获取用户已签署的漂流瓶，不包含自己发布但无人签署的部分
 
-        console.log(id);
+
         let myfloaterResult = await DB.find("users", {"_id": DB.getObjectId(id)});
+        console.log(myfloaterResult);
         let floaterNum = myfloaterResult[0].floater.length;
         var myfloaterArray = [];
         for (let i = 0; i < floaterNum; i++) {
