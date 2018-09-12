@@ -212,7 +212,7 @@ router.get("/getProtocol", async (ctx) => {
             ctx.body = {
                 code: 0,
                 message: "签署人数已满",
-                data: result
+                data: result[0]
             };
         }
     } catch (e) {
@@ -429,7 +429,6 @@ router.post("/makefloater", async (ctx) => {
         }
     }
 });
-
 //漂流瓶页面数据
 router.get("/myfloater", async (ctx) => {
     try {
@@ -481,7 +480,6 @@ router.get("/myfloater", async (ctx) => {
         }
     }
 });
-
 //签署漂流瓶
 router.post("/signFloater", async (ctx) => {
     try {
@@ -524,6 +522,39 @@ router.post("/signFloater", async (ctx) => {
         ctx.body = {
             code: -1,
             message: "漂流瓶签署失败",
+            data: []
+        }
+    }
+});
+//获取漂流瓶
+router.get("/getFloater", async (ctx) => {
+    try {
+        let id = ctx.query.id;
+        let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
+        // console.log(result[0].signatoryNum);
+        // console.log(result[0].signatory.length);
+        // console.log(result[0].signatoryNum <= result[0].signatory.length);
+        if (2 >= result[0].signatory.length) {
+            // var updateResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"share": Number(1)});
+            // console.log(updateResult);
+
+            ctx.body = {
+                code: 1,
+                message: "漂流瓶内容获取成功",
+                data: result[0]
+            };
+        } else {
+            let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
+            ctx.body = {
+                code: 0,
+                message: "签署人数已满",
+                data: result[0]
+            };
+        }
+    } catch (e) {
+        ctx.body = {
+            code: -1,
+            message: "协议内容获取失败",
             data: []
         }
     }
@@ -574,6 +605,7 @@ router.post("/modifyinfo", async (ctx) => {
         }
     }
 });
+
 //获取我参与的协议
 router.get("/myprotocol", async (ctx) => {
     try {
