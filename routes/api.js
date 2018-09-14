@@ -194,10 +194,12 @@ router.post("/doProtocol", async (ctx) => {
 router.get("/getProtocol", async (ctx) => {
     try {
         let id = ctx.query.id;
-        let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+        var result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+
+        console.log(result);
         // console.log(result[0].signatoryNum);
         // console.log(result[0].signatory.length);
-        // console.log(result[0].signatoryNum <= result[0].signatory.length);
+        console.log(result[0].signatoryNum < result[0].signatory.length);
         if (result[0].signatoryNum > result[0].signatory.length) {
             // var updateResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"share": Number(1)});
             // console.log(updateResult);
@@ -205,7 +207,7 @@ router.get("/getProtocol", async (ctx) => {
             ctx.body = {
                 code: 1,
                 message: "协议内容获取成功",
-                data: result
+                data: result[0]
             };
         } else {
             let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
@@ -530,7 +532,7 @@ router.post("/signFloater", async (ctx) => {
 router.get("/getFloater", async (ctx) => {
     try {
         let id = ctx.query.id;
-        let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
+        var result = await DB.find("floater", {"_id": DB.getObjectId(id)});
         // console.log(result[0].signatoryNum);
         // console.log(result[0].signatory.length);
         // console.log(result[0].signatoryNum <= result[0].signatory.length);
