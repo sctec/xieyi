@@ -60,10 +60,6 @@ xyapi.lzhu.top/api/v1/protocol-parise
 xyapi.lzhu.top/api/v1/userinfo
 传值：id
 
-8/19
-//获取已分享协议列表(抖协议)(get)
-xyapi.lzhu.top/api/v1/protocolList
-
 查看具体协议(get)
 xyapi.lzhu.top/api/v1/viewProtocol
 传值协议的id
@@ -85,6 +81,9 @@ xyapi.lzhu.top/api/v1/changeProtocolState
 
 //随机获取漂流瓶(get)
 xyapi.lzhu.top/api/v1/getRandomFloater
-
 暂时无法“非当前用户发表的协议”，做这个有点耗时，等之前的都改好后再改吧
 
+//获取协议列表(get)
+xyapi.lzhu.top/api/v1/protocolList/pageSize/page
+
+http 和 https 请求都可以使用

@@ -104,26 +104,8 @@ router.get("/userinfo", async (ctx) => {
     }
 });
 
-//获取已分享协议列表(抖协议)
-router.get("/protocolList", async (ctx) => {
-    try {
-        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)}, {}, {
-            sortJson: {"praiseNum": 1}
-        });
-        ctx.body = {
-            code: 1,
-            message: "获取已分享协议列表",
-            data: getprotocolresult,
-        }
-    } catch (e) {
-        ctx.body = {
-            code: 0,
-            message: "获取列表失败",
-            data: []
-        }
-    }
-});
-//生成协议
+
+// 生成协议
 router.post("/doProtocol", async (ctx) => {
     try {
         let title = ctx.request.body.title;         //协议标题
@@ -308,7 +290,32 @@ router.post("/changeProtocolState", async (ctx) => {
             data: null
         }
     }
-})
+});
+//获取协议列表
+router.get("/protocolList/:pageSize/:page", async (ctx) => {
+    try {
+        thepageSize = ctx.params.pageSize;
+        thepage = ctx.params.page;
+        console.log(thepage);
+        var getprotocolresult = await DB.find("protocol", {"share": Number(1), "state": Number(1)}, {}, {
+            "page": Number(thepage),
+            "pageSize": Number(thepageSize)
+            // sortJson: {"praiseNum": 1}
+        });
+        ctx.body = {
+            code: 1,
+            message: "获取已分享协议列表",
+            data: getprotocolresult,
+        }
+    } catch (e) {
+        ctx.body = {
+            code: 0,
+            message: "获取列表失败",
+            data: []
+        }
+    }
+});
+
 
 //获取评论列表
 router.get("/protocol-commentsList", async (ctx) => {      //---->127.0.0.1/api/v1/code/code-comments?id=5b0d593ffc0f8c0accd1ae7a
