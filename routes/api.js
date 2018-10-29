@@ -12,11 +12,6 @@ router.post("/doregister", async (ctx) => {
         let username = ctx.request.body.username;   //用户名
         let phone = ctx.request.body.phone; //手机号
         let password = ctx.request.body.password;
-
-        // let username = ctx.query.username;   //用户名
-        // let phone = ctx.query.phone; //手机号
-        // let password = ctx.query.password;
-        // console.log(username);
         let theresultone = await DB.find("users", {"username": username});
         let theresulttwo = await DB.find("users", {"phone": phone});
         console.log(theresultone);
@@ -38,8 +33,8 @@ router.post("/doregister", async (ctx) => {
                 "phone": phone,
                 "password": tools.md5(password),
                 "protocols": [],
-                "protocol":[],
-                "floater":[],
+                "protocol": [],
+                "floater": [],
                 "nickname": null,
                 "sex": null,
                 "email": null,
@@ -242,34 +237,41 @@ router.post("/signProtocol", async (ctx) => {
                 data: {}
             }
         } else {
-            protocolResult[0].signatory.push(username);
-            console.log(protocolResult[0].signatory);
-            let upResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {
-                "signatory": protocolResult[0].signatory
-            });
-            let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
-            if (result[0].signatory.length == result[0].signatoryNum) {
-                await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"state": Number(1)});
-            }
-            let userResult = await DB.find("users", {"username": username});
-            console.log(userResult);
+            if (Number(protocolResult[0].state) == 1) {
+                ctx.body = {
+                    code: -1,
+                    message: "该协议已生效，无法再添加签约人数。",
+                    data: {}
+                }
+            } else {
+                protocolResult[0].signatory.push(username);
+                let upResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {
+                    "signatory": protocolResult[0].signatory
+                });
+                let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+                if (result[0].signatory.length == result[0].signatoryNum) {
+                    await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"state": Number(1)});
+                }
+                let userResult = await DB.find("users", {"username": username});
+                console.log(userResult);
 
-            let protocolItem = {        //要存入协议+漂流瓶的协议对象
-                id: id,
-                type: Number(0)
-            };
-            userResult[0].protocols.push(protocolItem);
-            userResult[0].protocol.push(id);
-            //签署协议后更新签署人的用户表
-            let updateResult = await DB.update("users", {"username": username}, {
-                "protocols": userResult[0].protocols,
-                "protocol": userResult[0].protocol
-            });
+                let protocolItem = {        //要存入协议+漂流瓶的协议对象
+                    id: id,
+                    type: Number(0)
+                };
+                userResult[0].protocols.push(protocolItem);
+                userResult[0].protocol.push(id);
+                //签署协议后更新签署人的用户表
+                let updateResult = await DB.update("users", {"username": username}, {
+                    "protocols": userResult[0].protocols,
+                    "protocol": userResult[0].protocol
+                });
 
-            ctx.body = {
-                code: 1,
-                message: "创建成功",
-                data: protocolResult
+                ctx.body = {
+                    code: 1,
+                    message: "创建成功",
+                    data: protocolResult
+                }
             }
         }
     } catch (e) {
@@ -280,6 +282,34 @@ router.post("/signProtocol", async (ctx) => {
         }
     }
 });
+
+router.post("/changeProtocolState", async (ctx) => {
+    try {
+        let id = ctx.request.body.id;   //获取协议的id
+        var result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+        xchange = result[0].share
+        if (xchange) {
+            xchange = 0
+        } else {
+            xchange = 1
+        }
+        let upResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {
+            "share": Number(xchange)
+        });
+        ctx.body = {
+            code: 1,
+            message: "修改状态成功",
+            data: result[0]._id
+        }
+    } catch (e) {
+        ctx.body = {
+            code: -1,
+            message: "修改状态失败",
+            data: null
+        }
+    }
+})
+
 
 //获取评论列表
 router.get("/protocol-commentsList", async (ctx) => {      //---->127.0.0.1/api/v1/code/code-comments?id=5b0d593ffc0f8c0accd1ae7a
@@ -439,7 +469,7 @@ router.get("/myfloater", async (ctx) => {
         // console.log(id);
         //存放随机生成的一个漂流瓶和自己已签署过的漂流瓶
         var result = [];
-        
+
         //获取用户已签署的漂流瓶，不包含自己发布但无人签署的部分
 
 
@@ -468,7 +498,7 @@ router.get("/myfloater", async (ctx) => {
         floaterRandom.push(getfloaterresult[theNum]);
 
         result = floaterRandom.concat(myfloaterArray);
-        
+
         ctx.body = {
             code: 1,
             message: "获取信息成功",
@@ -490,34 +520,47 @@ router.post("/signFloater", async (ctx) => {
 
         // let username = ctx.query.username;         //签署人的用户名
         // let id = ctx.query.id;                      //协议的objectid
-        console.log(username);
         let floaterResult = await DB.find("floater", {"_id": DB.getObjectId(id)});
-        floaterResult[0].signatory.push(username);
-        console.log(floaterResult[0].signatory);
+        if (floaterResult[0].signatory.indexOf(username) > -1) {
+            ctx.body = {
+                code: 0,
+                message: "您是漂流瓶发起者，就不要再签了哦",
+                data: {}
+            }
+        } else {
+            if (Number(floaterResult[0].state == 1)) {
+                ctx.body = {
+                    code: -1,
+                    message: "该漂流瓶已生效，无法再添加签约人数。",
+                    data: {}
+                }
+            } else {
+                floaterResult[0].signatory.push(username);
+                let updateResult = await DB.update("floater", {"_id": DB.getObjectId(id)}, {
+                    "state": Number(1),
+                    "obtain_at": new Date(),
+                    "signatory": floaterResult[0].signatory
+                });
+                let userResult = await DB.find("users", {"username": username});
 
-        let updateResult = await DB.update("floater", {"_id": DB.getObjectId(id)}, {
-            "state": Number(1),
-            "obtain_at": new Date(),
-            "signatory": floaterResult[0].signatory
-        });
-        let userResult = await DB.find("users", {"username": username});
+                let floaterId = {
+                    id: id,
+                    type: Number(1)
+                };
+                userResult[0].floater.push(id);
+                userResult[0].protocols.push(floaterId);
+                let upResult = await DB.update("users", {"username": username}, {
+                    "protocols": userResult[0].protocols,
+                    "floater": userResult[0].floater
+                });
 
-        let floaterId = {
-            id: id,
-            type: Number(1)
-        };
-        userResult[0].floater.push(id);
-        userResult[0].protocols.push(floaterId);
-        let upResult = await DB.update("users", {"username": username}, {
-            "protocols": userResult[0].protocols,
-            "floater": userResult[0].floater
-        });
-
-        let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
-        ctx.body = {
-            code: 1,
-            message: "漂流瓶签署成功",
-            data: result
+                let result = await DB.find("floater", {"_id": DB.getObjectId(id)});
+                ctx.body = {
+                    code: 1,
+                    message: "漂流瓶签署成功",
+                    data: result
+                }
+            }
         }
 
     } catch (e) {
@@ -592,7 +635,7 @@ router.post("/modifyinfo", async (ctx) => {
             "region": region,
             "phone": phone,
             "email": email,
-            "password":tools.md5(password),
+            "password": tools.md5(password),
         });
         ctx.body = {
             code: 1,
@@ -607,7 +650,6 @@ router.post("/modifyinfo", async (ctx) => {
         }
     }
 });
-
 //获取我参与的协议
 router.get("/myprotocol", async (ctx) => {
     try {
@@ -618,9 +660,9 @@ router.get("/myprotocol", async (ctx) => {
         console.log(myprotocolresult);
         var getmyprotocolresult = [];
         for (i = 0; i < myprotocolresult.length; i++) {
-            if (myprotocolresult[i].type==0){
+            if (myprotocolresult[i].type == 0) {
                 getmyprotocolresult.push(await DB.find("protocol", {"_id": DB.getObjectId(myprotocolresult[i].id)}));
-            } else if (myprotocolresult[i].type==1) {
+            } else if (myprotocolresult[i].type == 1) {
                 getmyprotocolresult.push(await DB.find("floater", {"_id": DB.getObjectId(myprotocolresult[i].id)}));
             }
         }
@@ -637,7 +679,6 @@ router.get("/myprotocol", async (ctx) => {
         }
     }
 });
-
 //查看具体协议
 router.get("/viewProtocol", async (ctx) => {
     try {
@@ -659,7 +700,6 @@ router.get("/viewProtocol", async (ctx) => {
         }
     }
 });
-
 //意见反馈
 router.post("/feedback", async (ctx) => {
     try {

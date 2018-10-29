@@ -37,8 +37,8 @@ const UserSchema = new Schema({     //用户的唯一标识为用户名和object
     },
     friends: Array, //好友。存储用户的ObjectId
     protocols: Array, //参与的协议,数组元素为对象。{ObjectId;type:0表示协议，1表示漂流瓶}
-    floater:Array,
-    protocol:Array
+    floater: Array,
+    protocol: Array  //这是个啥......不知道
 });
 
 const User = mongoose.model('User', UserSchema);
