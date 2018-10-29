@@ -79,5 +79,12 @@ xyapi.lzhu.top/api/v1/feedback
 xyapi.lzhu.top/api/v1/myfloater
 传值：id(用户的id)
 
+//改变协议状态(post)
+xyapi.lzhu.top/api/v1/changeProtocolState
+传值：id(协议的id)
 
+//随机获取漂流瓶(get)
+xyapi.lzhu.top/api/v1/getRandomFloater
+
+暂时无法“非当前用户发表的协议”，做这个有点耗时，等之前的都改好后再改吧
 

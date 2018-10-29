@@ -282,7 +282,7 @@ router.post("/signProtocol", async (ctx) => {
         }
     }
 });
-
+//改变协议状态
 router.post("/changeProtocolState", async (ctx) => {
     try {
         let id = ctx.request.body.id;   //获取协议的id
@@ -309,7 +309,6 @@ router.post("/changeProtocolState", async (ctx) => {
         }
     }
 })
-
 
 //获取评论列表
 router.get("/protocol-commentsList", async (ctx) => {      //---->127.0.0.1/api/v1/code/code-comments?id=5b0d593ffc0f8c0accd1ae7a
@@ -601,6 +600,37 @@ router.get("/getFloater", async (ctx) => {
             code: -1,
             message: "协议内容获取失败",
             data: []
+        }
+    }
+});
+//随机获取漂流瓶
+router.get("/getRandomFloater", async (ctx) => {
+    try {
+        let id = ctx.query.id;  //获取用户id
+        //生成随机数函数，用来获取随机的一个漂流瓶
+        function getFloaterRandom(start, end) {
+            var length = end - start + 1;
+            var num = parseInt(Math.random() * (length) + start);
+            return num;
+        }
+
+        //获取未签署漂流瓶的个数
+        var getfloaterresult = await DB.find("floater", {"state": 0});
+        let floaterRandomNum = getfloaterresult.length;
+        let theNum = getFloaterRandom(0, floaterRandomNum);
+        var floaterRandom = [];
+        floaterRandom.push(getfloaterresult[theNum]);
+
+        ctx.body = {
+            code: 1,
+            message: "获取信息成功",
+            data: floaterRandom[0]
+        }
+    } catch (e) {
+        ctx.body = {
+            code: 0,
+            message: "获取信息失败",
+            data: result
         }
     }
 });
