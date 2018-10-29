@@ -1,3 +1,4 @@
+--------------------------------------------------------------------------------
 注册：(post)
 xyapi.lzhu.top/api/v1/doregister
 传值：username（用户名）phone（手机）password（密码）
@@ -6,7 +7,7 @@ xyapi.lzhu.top/api/v1/doregister
 登录：（post）
 xyapi.lzhu.top/api/v1/dologin
 传值：username(用户名) password（密码）
-
+----------------------------------------------------------------------------------
 生成协议：
 xyapi.lzhu.top/api/v1/doProtocol  Post 请求
 传值：title（标题），content（内容），signatoryNum（签署人数）,username（发起人的用户名）,share(是否分享.0不分享，1分享)
