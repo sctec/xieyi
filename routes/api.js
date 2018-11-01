@@ -40,11 +40,12 @@ router.post("/doregister", async (ctx) => {
                 "email": null,
             });
             console.log(result);
+            inserUsername= result.ops[0].username;
             if (result) {
                 ctx.body = {
                     code: 1,
                     message: "注册成功",
-                    data: {"id": result.insertedId}
+                    data: {"id": result.insertedId,"username":inserUsername}
                 }
             } else {
                 throw "注册失败";
