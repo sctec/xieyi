@@ -40,12 +40,12 @@ router.post("/doregister", async (ctx) => {
                 "email": null,
             });
             console.log(result);
-            inserUsername= result.ops[0].username;
+            inserUsername = result.ops[0].username;
             if (result) {
                 ctx.body = {
                     code: 1,
                     message: "注册成功",
-                    data: {"id": result.insertedId,"username":inserUsername}
+                    data: {"id": result.insertedId, "username": inserUsername}
                 }
             } else {
                 throw "注册失败";
@@ -211,52 +211,61 @@ router.post("/signProtocol", async (ctx) => {
 
         // var username = ctx.query.username;         //签署人的用户名
         // var id = ctx.query.id;                      //协议的objectid
-
-        var protocolResult = await DB.find("protocol", {"_id": DB.getObjectId(id)});
-        if (protocolResult[0].signatory.indexOf(username) > -1) {
+        let queryusername = await DB.find("users", {"username": username});
+        if (queryusername[0]) {
             ctx.body = {
-                code: 0,
-                message: "您已参与本协议",
+                code: -2,
+                message: "您尚未注册，请注册后使用",
                 data: {}
             }
         } else {
-            if (Number(protocolResult[0].state) == 1) {
+            var protocolResult = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+            if (protocolResult[0].signatory.indexOf(username) > -1) {
                 ctx.body = {
-                    code: -1,
-                    message: "该协议已生效，无法再添加签约人数。",
+                    code: 0,
+                    message: "您已参与本协议",
                     data: {}
                 }
             } else {
-                protocolResult[0].signatory.push(username);
-                let upResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {
-                    "signatory": protocolResult[0].signatory
-                });
-                let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
-                if (result[0].signatory.length == result[0].signatoryNum) {
-                    await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"state": Number(1)});
-                }
-                let userResult = await DB.find("users", {"username": username});
-                console.log(userResult);
+                if (Number(protocolResult[0].state) == 1) {
+                    ctx.body = {
+                        code: -1,
+                        message: "该协议已生效，无法再添加签约人数。",
+                        data: {}
+                    }
+                } else {
+                    protocolResult[0].signatory.push(username);
+                    let upResult = await DB.update("protocol", {"_id": DB.getObjectId(id)}, {
+                        "signatory": protocolResult[0].signatory
+                    });
+                    let result = await DB.find("protocol", {"_id": DB.getObjectId(id)});
+                    if (result[0].signatory.length == result[0].signatoryNum) {
+                        await DB.update("protocol", {"_id": DB.getObjectId(id)}, {"state": Number(1)});
+                    }
+                    let userResult = await DB.find("users", {"username": username});
+                    console.log(userResult);
 
-                let protocolItem = {        //要存入协议+漂流瓶的协议对象
-                    id: id,
-                    type: Number(0)
-                };
-                userResult[0].protocols.push(protocolItem);
-                userResult[0].protocol.push(id);
-                //签署协议后更新签署人的用户表
-                let updateResult = await DB.update("users", {"username": username}, {
-                    "protocols": userResult[0].protocols,
-                    "protocol": userResult[0].protocol
-                });
+                    let protocolItem = {        //要存入协议+漂流瓶的协议对象
+                        id: id,
+                        type: Number(0)
+                    };
+                    userResult[0].protocols.push(protocolItem);
+                    userResult[0].protocol.push(id);
+                    //签署协议后更新签署人的用户表
+                    let updateResult = await DB.update("users", {"username": username}, {
+                        "protocols": userResult[0].protocols,
+                        "protocol": userResult[0].protocol
+                    });
 
-                ctx.body = {
-                    code: 1,
-                    message: "创建成功",
-                    data: protocolResult
+                    ctx.body = {
+                        code: 1,
+                        message: "创建成功",
+                        data: protocolResult
+                    }
                 }
             }
         }
+
     } catch (e) {
         ctx.body = {
             code: -1,

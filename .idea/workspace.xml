@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="862c72fa-c519-4c0a-86f7-f486fda62ec7" name="Default" comment="10/29 修改2">
+    <list default="true" id="862c72fa-c519-4c0a-86f7-f486fda62ec7" name="Default" comment="11/1 新增注册后返回username字段">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.js" afterDir="false" />
     </list>
@@ -18,27 +18,28 @@
     <session id="1359618027">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.23" value="1" />
           <entry key="project.open.time.38" value="1" />
           <entry key="project.open.time.39" value="1" />
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.8" value="2" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="js" value="1125" />
-          <entry key="txt" value="343" />
+          <entry key="js" value="1179" />
+          <entry key="txt" value="386" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JavaScript" value="1125" />
-          <entry key="PLAIN_TEXT" value="343" />
+          <entry key="JavaScript" value="1179" />
+          <entry key="PLAIN_TEXT" value="386" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -56,12 +57,26 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/api.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="53" column="17" lean-forward="true" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
+            <state relative-caret-position="394">
+              <caret line="219" column="13" lean-forward="true" selection-start-line="219" selection-start-column="13" selection-end-line="219" selection-end-column="13" />
+              <folding>
+                <element signature="e#231#1789#0" />
+                <element signature="e#1836#2478#0" />
+                <element signature="e#2536#2907#0" />
+                <element signature="e#2962#5041#0" />
+                <element signature="e#5112#6166#0" />
+                <element signature="e#6914#7050#0" />
+                <element signature="e#7112#7283#0" />
+                <element signature="e#7439#7519#0" />
+                <element signature="e#7681#7800#0" />
+                <element signature="e#7959#8066#0" />
+                <element signature="e#8294#8426#0" />
+                <element signature="e#8457#8583#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -69,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="171">
+              <caret line="9" column="22" lean-forward="true" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -252,7 +267,8 @@
       <workItem from="1540819786125" duration="1853000" />
       <workItem from="1540899064427" duration="251000" />
       <workItem from="1540899357797" duration="547000" />
-      <workItem from="1541030788644" duration="416000" />
+      <workItem from="1541030788644" duration="2118000" />
+      <workItem from="1541128914914" duration="294000" />
     </task>
     <task id="LOCAL-00001" summary="试试">
       <created>1540785793251</created>
@@ -282,22 +298,29 @@
       <option name="project" value="LOCAL" />
       <updated>1540821041067</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="11/1 新增注册后返回username字段">
+      <created>1541031336241</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1541031336241</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="113285000" />
+    <option name="totallyTimeSpent" value="115281000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11764706" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14221892" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2003367" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2003367" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -367,7 +390,8 @@
     <MESSAGE value="试试" />
     <MESSAGE value="10/29 修改" />
     <MESSAGE value="10/29 修改2" />
-    <option name="LAST_COMMIT_MESSAGE" value="10/29 修改2" />
+    <MESSAGE value="11/1 新增注册后返回username字段" />
+    <option name="LAST_COMMIT_MESSAGE" value="11/1 新增注册后返回username字段" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/package.json">
@@ -442,15 +466,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        <state relative-caret-position="171">
+          <caret line="9" column="22" lean-forward="true" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="53" column="17" lean-forward="true" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
+        <state relative-caret-position="394">
+          <caret line="219" column="13" lean-forward="true" selection-start-line="219" selection-start-column="13" selection-end-line="219" selection-end-column="13" />
+          <folding>
+            <element signature="e#231#1789#0" />
+            <element signature="e#1836#2478#0" />
+            <element signature="e#2536#2907#0" />
+            <element signature="e#2962#5041#0" />
+            <element signature="e#5112#6166#0" />
+            <element signature="e#6914#7050#0" />
+            <element signature="e#7112#7283#0" />
+            <element signature="e#7439#7519#0" />
+            <element signature="e#7681#7800#0" />
+            <element signature="e#7959#8066#0" />
+            <element signature="e#8294#8426#0" />
+            <element signature="e#8457#8583#0" />
+          </folding>
         </state>
       </provider>
     </entry>
